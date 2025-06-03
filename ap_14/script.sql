@@ -1,6 +1,108 @@
 -- Active: 1742297470882@@127.0.0.1@5432@20231_pbdi_stored_procedures
 
+UPDATE tb_pessoa
+SET saldo = 300
+WHERE cod_pessoa = 1;
 
+SELECT * FROM tb_auditoria;
+
+CREATE OR REPLACE TRIGGER tg_log_pessoa_update
+AFTER UPDATE ON tb_pessoa
+FOR EACH ROW
+    EXECUTE PROCEDURE fn_log_pessoa_update();
+
+
+
+
+-- CREATE OR REPLACE FUNCTION fn_log_pessoa_update()
+-- RETURNS TRIGGER
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     INSERT INTO tb_auditoria
+--     (cod_pessoa, nome, idade, saldo_antigo, saldo_atual)
+--     VALUES
+--     (NEW.cod_pessoa, NEW.nome, NEW.idade, OLD.saldo, NEW.saldo);
+--     RETURN NEW;
+-- END;
+-- $$
+
+
+-- SELECT * FROM tb_auditoria
+
+
+--
+
+
+
+
+-- CREATE OR REPLACE TRIGGER tg_log_pessoa_insert
+-- AFTER INSERT ON tb_pessoa
+-- FOR EACH ROW
+--     EXECUTE PROCEDURE fn_log_pessoa_insert();
+
+-- ALTER TABLE tb_auditoria ADD COLUMN
+--     IF NOT EXISTS nome VARCHAR(200) NOT NULL;
+
+-- CREATE OR REPLACE FUNCTION fn_log_pessoa_insert()
+-- RETURNS TRIGGER
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     INSERT INTO tb_auditoria
+--     (cod_pessoa, nome, idade, saldo_antigo, saldo_atual)
+--     VALUES
+--     (NEW.cod_pessoa, NEW.nome, NEW.idade, NULL, NEW.saldo);
+--     RETURN NULL;
+-- END;
+-- $$
+
+-- SELECT * FROM tb_pessoa;
+
+-- INSERT INTO tb_pessoa
+-- (nome, idade, saldo) VALUES
+-- ('João', 20, 100),
+-- ('Pedro', 22, -100),
+-- ('Maria', 22, 400);
+
+
+-- CREATE OR REPLACE TRIGGER tg_valida_updata_insert
+-- BEFORE INSERT OR UPDATE ON tb_pessoa
+-- FOR EACH ROW
+-- EXECUTE PROCEDURE fn_valida_saldo();
+
+-- CREATE OR REPLACE FUNCTION fn_valida_saldo()
+-- RETURNS TRIGGER
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     IF NEW.saldo >= 0 THEN
+--         RETURN NEW;
+--     ELSE
+--         RAISE NOTICE'valor R$% invalido', NEW.saldo;
+--         RETURN NULL;
+--     END IF;
+-- END;
+-- $$
+
+
+
+
+
+-- CREATE TABLE IF NOT EXISTS tb_pessoa(
+--     cod_pessoa SERIAL PRIMARY KEY,
+--     nome VARCHAR(200) NOT NULL,
+--     idade INT NOT NULL,
+--     saldo NUMERIC(10,2) NOT NULL
+-- );
+
+-- CREATE TABLE IF NOT EXISTS tb_auditoria(
+--     cod_auditoria SERIAL PRIMARY KEY,
+--     cod_pessoa INT NOT NULL,
+--     idade INT NOT NULL,
+--     saldo_antigo NUMERIC(10,2),
+--     saldo_atual NUMERIC(10,2)
+-- );
 
 -- UPDATE tb_teste_trigger SET texto ='texto atualizado'
 -- WHERE cod_teste_trigger IN (2,3);
@@ -12,7 +114,7 @@
 
 
 
-INSERT INTO tb_teste_trigger (texto) VALUES ('Oi de novo');
+-- INSERT INTO tb_teste_trigger (texto) VALUES ('Oi de novo');
 
 
 
@@ -155,7 +257,7 @@ INSERT INTO tb_teste_trigger (texto) VALUES ('Oi de novo');
 -- $$
 
 
-CREATE TABLE tb_teste_trigger(
-    cod_teste_trigger SERIAL PRIMARY KEY,
-    texto VARCHAR(200)
-);
+-- CREATE TABLE tb_teste_trigger(
+--     cod_teste_trigger SERIAL PRIMARY KEY,
+--     texto VARCHAR(200)
+-- );
